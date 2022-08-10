@@ -147,6 +147,9 @@ done
 ### Test mysql binary
 check_mysqlish MYSQL mysql
 check_mysqlish MYSQLADMIN mysqladmin
+if $verbose; then
+  echo "USING $MYSQL"
+fi
 
 ### Print hotcrp.com message
 if ! $quiet && ! $batch && ! [ -n "$options_file" -a -f "$options_file" ]; then
@@ -402,10 +405,10 @@ if [ "$createuser" = y ]; then
         echo "select User from user where User='$DBUSER' and Host='$host';" | eval $MYSQL $mycreatedb_args $myargs $FLAGS -N mysql | grep . >/dev/null 2>&1
         if [ $? = 0 ]; then
             if $verbose; then
-                echo ". DROP USER '$DBUSER'@'$host' IF EXISTS;"
+                echo ". DROP USER IF EXISTS '$DBUSER'@'$host';"
             fi
             eval $MYSQL $mycreatedb_args $myargs $FLAGS mysql <<__EOF__ || exit 1
-DROP USER '$DBUSER'@'$host' IF EXISTS;
+DROP USER IF EXISTS '$DBUSER'@'$host';
 __EOF__
         fi
         if $verbose; then
