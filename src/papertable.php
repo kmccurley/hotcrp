@@ -2,6 +2,13 @@
 // papertable.php -- HotCRP helper class for producing paper tables
 // Copyright (c) 2006-2022 Eddie Kohler; see LICENSE.
 
+///////////// Added for IACR functionality ////////////
+global $ConfSitePATH, $Opt;
+if (isset($Opt["iacrType"])) {
+  require_once("$ConfSitePATH/iacr/includes/papertable.php");
+}
+///////////////////////////////////////////////////////
+
 class PaperTable {
     /** @var Conf
      * @readonly */
@@ -2044,6 +2051,14 @@ class PaperTable {
         }
 
         echo "</div></form>";
+
+        // This is to disable the IACR checkboxes on the submission form for
+        // a paper. We control those separately when an appropriate action is
+        // completed.
+        if (array_key_exists("iacrType", $this->conf->opt)) {
+          Ht::stash_script("iacrSubmitAndUploadCheckboxes()");
+        }
+
         $this->user->set_overrides($overrides);
     }
 

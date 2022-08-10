@@ -78,6 +78,8 @@ if ($nav->page === "images" || $nav->page === "scripts" || $nav->page === "style
     $_GET["file"] = $nav->page . $nav->path;
     include("src/pages/p_cacheable.php");
     Cacheable_Page::go_nav($nav);
+} else if ($nav->page === "iacrcopyright") {
+    include("iacrcopyright/index.php");
 } else if ($nav->page === "cacheable") {
     include("src/pages/p_cacheable.php");
     Cacheable_Page::go_nav($nav);
