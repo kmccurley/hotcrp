@@ -166,6 +166,10 @@ class Options_SettingRenderer {
             Ht::button(Icons::ui_use("movearrow0"), ["class" => "btn-licon ui js-settings-sf-move moveup need-tooltip", "aria-label" => "Move up in display order"]),
             Ht::button(Icons::ui_use("movearrow2"), ["class" => "btn-licon ui js-settings-sf-move movedown need-tooltip", "aria-label" => "Move down in display order"]),
             '</span>',
+        if (!isset($sv->conf->opt['iacrType'])) {
+          echo 'THIS MAY HAVE IACR restrictions';
+          var_dump($this->io);
+        }
             Ht::button(Icons::ui_use("trash"), ["class" => "btn-licon ui js-settings-sf-move delete need-tooltip", "aria-label" => "Delete", "data-exists-count" => $this->paper_count($this->io)]),
             "</div></div>";
     }
@@ -249,6 +253,16 @@ class Options_SettingRenderer {
             }
         }
 
+        global $Opt;
+        if (isset($Opt["iacrType"])) {
+          echo "<div class=\"msg msg-error\">Warning: do not change the fields for final versions and copyright. IACR handles them differently from HotCRP.";
+          if ($Opt["iacrType"] !== "tosc" &&
+              $Opt["iacrType"] !== "tches" &&
+              $Opt["iacrType"] !== "rump") {
+             echo " Accepted papers will also have an option to upload slides to the IACR server.";
+          }
+          echo "</div>";
+        }
         echo "<hr class=\"g\">\n",
             Ht::hidden("has_sf", 1),
             Ht::hidden("options_version", (int) $sv->conf->setting("options")),

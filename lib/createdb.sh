@@ -402,10 +402,10 @@ if [ "$createuser" = y ]; then
         echo "select User from user where User='$DBUSER' and Host='$host';" | eval $MYSQL $mycreatedb_args $myargs $FLAGS -N mysql | grep . >/dev/null 2>&1
         if [ $? = 0 ]; then
             if $verbose; then
-                echo ". DROP USER '$DBUSER'@'$host';"
+                echo ". DROP USER '$DBUSER'@'$host' IF EXISTS;"
             fi
             eval $MYSQL $mycreatedb_args $myargs $FLAGS mysql <<__EOF__ || exit 1
-DROP USER '$DBUSER'@'$host';
+DROP USER '$DBUSER'@'$host' IF EXISTS;
 __EOF__
         fi
         if $verbose; then

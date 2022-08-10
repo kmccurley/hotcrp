@@ -2,6 +2,11 @@
 // paperoption.php -- HotCRP helper class for paper options
 // Copyright (c) 2006-2022 Eddie Kohler; see LICENSE.
 
+global $ConfSitePATH, $Opt;
+if (isset($Opt["iacrType"])) {
+  require_once("$ConfSitePATH/iacr/includes/papertable.php");
+}
+
 class PaperValue implements JsonSerializable {
     /** @var PaperInfo
      * @readonly */
@@ -650,6 +655,9 @@ class PaperOption implements JsonSerializable {
     const COLLABORATORSID = -1007;
     const SUBMISSION_VERSION_ID = -1008;
 
+    /** @var ?string
+    * @readonly */
+    public $iacrSetting;
     /** @var Conf
      * @readonly */
     public $conf;
@@ -758,6 +766,7 @@ class PaperOption implements JsonSerializable {
         $this->_search_keyword = $args->search_keyword ?? $this->_json_key;
         $this->formid = $this->id > 0 ? "opt{$this->id}" : $this->_json_key;
 
+        $this->iacrSetting = $args->iacrSetting ?? null;
         $this->description = $args->description ?? "";
         $this->description_format = $args->description_format ?? null;
         $this->nonpaper = ($args->nonpaper ?? false) === true;
@@ -1187,6 +1196,9 @@ class PaperOption implements JsonSerializable {
         if ($this->type !== null) {
             $j->type = $this->type;
         }
+        if ($this->iacrSetting !== null) {
+            $j->iacrSetting = $this->iacrSetting;
+        }
         $j->order = (int) $this->order;
         if ($this->description !== "") {
             $j->description = $this->description;
@@ -1440,11 +1452,13 @@ class Checkbox_PaperOption extends PaperOption {
         }
     }
     function print_web_edit(PaperTable $pt, $ov, $reqov) {
-        $cb = Ht::checkbox($this->formid, 1, !!$reqov->value, [
-            "id" => $this->readable_formid(),
-            "data-default-checked" => !!$ov->value,
-            "disabled" => !$this->test_editable($ov->prow)
-        ]);
+        $extras = array("id" => $this->readable_formid(),
+                        "data-default-checked" => !!$ov->value,
+                        "disabled" => !$this->test_editable($ov->prow));
+        if (has_iacr_button($this)) {
+          $extras["data-iacrcheckbox"] = true;
+        }
+        $cb = Ht::checkbox($this->formid, 1, !!$reqov->value, $extras);
         $pt->print_editable_option_papt($this,
             '<span class="checkc">' . $cb . '</span>' . $pt->edit_title_html($this),
             ["for" => "checkbox", "tclass" => "ui js-click-child"]);
